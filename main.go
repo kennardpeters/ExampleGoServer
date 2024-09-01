@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"testing"
 )
 
 type countHandler struct {
@@ -57,4 +58,48 @@ func main() {
 	wg.Wait()
 	
 	log.Fatal(http.ListenAndServe(":8080", new(countHandler)))
+}
+
+
+func ExampleTest(t *testing.T) {
+
+	t.Parallel()
+
+
+	//Obtain a db connection here
+
+	type testCase struct {
+		name string
+		data int
+	}
+
+	testCases := []testCase{
+		{
+			name: "test 1",
+			data: 1,
+		},
+		{
+			name: "test 1",
+			data: 2,
+		},
+	}
+
+	for i := range testCases {
+
+		tc := testCases[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			//wer
+			t.Parallel()
+
+
+		})
+	}
+
+
+
+
+
+	
+	
 }
