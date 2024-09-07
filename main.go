@@ -21,10 +21,29 @@ func (h *countHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "count is %d\n", h.n)
 }
 
+type runHandler struct {
+	mu sync.Mutex
+	n int
+}
+
+func (h *runHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	ra := r.RemoteAddr
+
+
+	fmt.Fprintf(w, "ra: %s count is %d\n", ra, h.n)
+
+	h.n++
+}
+
 func main() {
 
 
 	http.Handle("/count", new(countHandler))
+
+	http.Handle("/run", new(runHandler))
 
 
 	msgChannel := make(chan int)
