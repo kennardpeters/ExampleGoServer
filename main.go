@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/kennardpeters/ExampleGoServer/datastore"
+	"github.com/kennardpeters/ExampleGoServer/server"
+	"golang.org/x/net/websocket"
 )
 
 type countHandler struct {
@@ -41,6 +43,9 @@ func (h *runHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	wsServer := server.NewServer()
+	http.Handle("/ws", websocket.Handler(wsServer.HandleWS))
 
 
 	http.Handle("/count", new(countHandler))
@@ -85,7 +90,7 @@ func main() {
 
 	//wg.Wait()
 	
-	log.Fatal(http.ListenAndServe(":8080", new(countHandler)))
+	log.Fatal(http.ListenAndServe(":8333", nil))
 }
 
 
