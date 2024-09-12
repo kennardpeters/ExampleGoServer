@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/kennardpeters/ExampleGoServer/datastore"
 	"golang.org/x/net/websocket"
 )
 
 
 type Server struct {
 	conns map[*websocket.Conn]bool
+	store *datastore.DataStore
 }
 
-func NewServer() *Server {
+func NewServer(store *datastore.DataStore) *Server {
 	return &Server{
 		conns: make(map[*websocket.Conn]bool),
+		store: store,
 	}
 }
 
@@ -41,8 +44,14 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
+	
+		email, err := s.store.SelectEmailByUserID(string(msg))
+		if err != nil {
+			s.broadcast([]byte(err.Error()))
+			return
+		}
 
-		s.broadcast(msg)
+		s.broadcast([]byte(email))
 	}
 }
 

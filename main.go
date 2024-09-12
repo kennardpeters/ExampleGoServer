@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -44,20 +45,26 @@ func (h *runHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	wsServer := server.NewServer()
+	ctx := context.Background()
+
+
+	//initialize database
+	ds, err := datastore.NewDatastore(ctx)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		ds.CloseConnection(ctx)
+		log.Println("Closing connections")
+	}()
+
+	wsServer := server.NewServer(ds)
 	http.Handle("/ws", websocket.Handler(wsServer.HandleWS))
 
 
 	http.Handle("/count", new(countHandler))
 
 	http.Handle("/run", new(runHandler))
-
-	email, err := datastore.NewDatastore()
-	if err != nil {
-		panic(err)
-	}
-
-	log.Println(email)
 
 
 	//msgChannel := make(chan int)
