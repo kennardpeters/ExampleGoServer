@@ -32,12 +32,23 @@ func (s *DataStore) CloseConnection(ctx context.Context) error {
 }
 
 
-func (s *DataStore) SelectEmailByUserID(userID string) (string, error) {
+func (s *DataStore) SelectEmailByUserID(ctx context.Context, userID string) (string, error) {
 	var email string
-	err := s.conn.QueryRow(context.Background(), "SELECT email FROM users WHERE id=$1", userID).Scan(&email)
+	err := s.conn.QueryRow(ctx, "SELECT email FROM users WHERE id=$1", userID).Scan(&email)
 	if err != nil {
 		return email, err
 	}
 
 	return email, nil
+}
+
+func (s *DataStore) SelectLinksByUserID(ctx context.Context, userID string) (string, error) {
+	var link string
+
+	err := s.conn.QueryRow(ctx, "SELECT url FROM links WHERE user_id=$1", userID).Scan(&link)
+	if err != nil {
+		return link, err
+	}
+
+	return link, nil
 }

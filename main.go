@@ -54,8 +54,8 @@ func main() {
 		panic(err)
 	}
 	defer func() {
-		ds.CloseConnection(ctx)
 		log.Println("Closing connections")
+		ds.CloseConnection(ctx)
 	}()
 
 	wsServer := server.NewServer(ds)

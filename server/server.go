@@ -3,8 +3,10 @@ package server
 import (
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/kennardpeters/ExampleGoServer/datastore"
+	"golang.org/x/exp/rand"
 	"golang.org/x/net/websocket"
 )
 
@@ -44,14 +46,29 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 		msg := buf[:n]
+
+		first := rand.ExpFloat64()
+		second := rand.ExpFloat64()
+
+		if first > second {
 	
-		email, err := s.store.SelectEmailByUserID(string(msg))
-		if err != nil {
-			s.broadcast([]byte(err.Error()))
-			return
+			email, err := s.store.SelectEmailByUserID(ws.Request().Context(), string(msg))
+			if err != nil {
+				s.broadcast([]byte(err.Error()))
+				return
+			}
+			s.broadcast([]byte(email))
+		} else {
+
+			link, err := s.store.SelectLinksByUserID(ws.Request().Context(), string(msg))
+			if err != nil {
+				s.broadcast([]byte(err.Error()))
+				return
+			}
+			s.broadcast([]byte(link))
 		}
 
-		s.broadcast([]byte(email))
+
 	}
 }
 
