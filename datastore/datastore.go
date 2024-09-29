@@ -52,3 +52,13 @@ func (s *DataStore) SelectLinksByUserID(ctx context.Context, userID string) (str
 
 	return link, nil
 }
+
+
+func (s *DataStore) DeleteUserByUserID(ctx context.Context, userID string) (string, error) {
+	return "", nil
+}
+
+
+func (s *DataStore) CreateUser(ctx context.Context, user *User) error {
+	return nil
+}

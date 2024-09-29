@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"io"
-	"log"
 
 	"github.com/kennardpeters/ExampleGoServer/datastore"
 	"golang.org/x/exp/rand"
